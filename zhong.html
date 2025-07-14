@@ -102,7 +102,7 @@
             color: #666;
         }
 
-        /* 新增全屏按钮样式 */
+        /* 全屏按钮样式 */
         .fullscreen-btn {
             position: absolute;
             top: 10px;
@@ -163,6 +163,41 @@
         .btn-3 {
             background: #E91E63;
         }
+
+        /* 按钮点击提示样式 */
+        .button-prompt {
+            margin: 20px auto;
+            padding: 15px;
+            max-width: 250px;
+            border-radius: 8px;
+            background: #f0f0f0;
+            color: #333;
+            font-size: 16px;
+            display: none;
+        }
+
+        /* 公告区域样式 */
+        .announcement {
+            margin-top: 30px;
+            padding: 15px;
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .announcement-title {
+            font-weight: bold;
+            color: #e65100;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .announcement-content {
+            font-size: 13px;
+            color: #5d4037;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -180,22 +215,35 @@
         <div class="payment-section">
             <div class="payment-title">获取卡密请扫码付款</div>
             <div class="wechat-qrcode">
-                <img src="https://download-cdn.123295.com/123-953/8cb68e73/1836259144-0/8cb68e739468200396ca4f26f134d7b9/c-m86?v=5&t=1752539559&s=175253955937e532be330b32f254a42493423cd8b6&r=SS2CLG&bzc=1&bzs=0&bzp=0&bi=2102300737&filename=IMG_20250714_073501.png&cache_type=1" alt="微信收款二维码">
+                <img src="https://download-cdn.123295.com/123-953/8cb68e73/1836259144-0/8cb68e739468200396ca4f26f134d7b9/c-m86?v=5&t=1752539559&s=175253955937e532be330b32f254a42493423cd8b6&r=SS2CLG&bzc=1&bzs=0&bzp=0&bi=2102300737&filename=IMG_20250714_073501.png" alt="微信收款二维码">
             </div>
             <div class="payment-desc">付款后联系客服获取卡密</div>
+        </div>
+    </div>
+
+    <!-- 公告区域 -->
+    <div class="announcement">
+        <div class="announcement-title">📢 最新公告</div>
+        <div class="announcement-content">
+            1. 本工具仅支持官方正版游戏，第三方修改版可能无法正常使用<br>
+            2. 请确保游戏版本为v3.5.2及以上，低版本需升级后使用<br>
+            3. 若出现功能失效，请重启游戏并重新验证卡密<br>
+            4. 客服工作时间：每日9:00-22:00，留言将在2小时内回复<br>
+            5. 客服电话：17306566985 微信售后发卡
         </div>
     </div>
 
     <!-- 验证成功跳转页面 -->
     <div id="success-page">
         <h3>卡密验证成功，上游戏开小窗即可</h3>
+        <!-- 按钮点击提示框 -->
+        <div class="button-prompt" id="buttonPrompt"></div>
         <div class="btn-group">
             <button class="action-btn btn-1" onclick="handleAction('action1')">天线透视</button>
             <button class="action-btn btn-2" onclick="handleAction('action2')">吸附自瞄</button>
             <button class="action-btn btn-3" onclick="handleAction('action3')">动态广角</button>
-           <button class="action-btn btn-3" onclick="handleAction('action3')">传世武器美化</button>
-           <button class="action-btn btn-3" onclick="handleAction('action3')">加载二进制文件</button>
-           <h3>加载二进制文件较久耐心等待</h3>
+            <button class="action-btn btn-3" onclick="handleAction('action4')">传世武器美化</button>
+            <button class="action-btn btn-3" onclick="handleAction('action5')">加载二进制防风文件</button>
         </div>
     </div>
 
@@ -225,20 +273,38 @@
             document.getElementById('success-page').style.display = 'block';
         }
 
-        // 按钮点击事件
+        // 按钮点击事件：先显示2秒准备提示，再显示7秒二进制加载提示
         function handleAction(action) {
-            // 可根据需要修改每个按钮的跳转链接或功能
-            switch(action) {
-                case 'action1':
-                    window.location.href = '#'; // 替换为实际链接
-                    break;
-                case 'action2':
-                    window.location.href = '#'; // 替换为实际链接
-                    break;
-                case 'action3':
-                    window.location.href = '#'; // 替换为实际链接
-                    break;
-            }
+            const promptDiv = document.getElementById('buttonPrompt');
+            const btnGroup = document.querySelector('.btn-group');
+            
+            // 隐藏按钮组，显示提示
+            btnGroup.style.display = 'none';
+            promptDiv.style.display = 'block';
+            promptDiv.textContent = '准备中...';
+
+            // 2秒后显示二进制加载倒计时
+            setTimeout(() => {
+                let seconds = 7;
+                promptDiv.textContent = `二进制加载中`;
+                
+                // 每秒更新倒计时
+                const countdown = setInterval(() => {
+                    seconds--;
+                    if (seconds > 0) {
+                        promptDiv.textContent = `二进制加载中`;
+                    } else {
+                        clearInterval(countdown);
+                        promptDiv.textContent = '加载完成！功能已生效';
+                        // 1秒后可选择跳转或返回
+                        setTimeout(() => {
+                            // 这里可根据需要修改为跳转链接或显示按钮组
+                            btnGroup.style.display = 'flex';
+                            promptDiv.style.display = 'none';
+                        }, 1000);
+                    }
+                }, 1000);
+            }, 2000);
         }
 
         async function verifyCardKey() {
@@ -279,8 +345,8 @@
                     resultDiv.textContent = '卡密验证成功！';
                     resultDiv.className = 'success';
                     log('验证成功');
-                    // 验证成功后跳转页面
-                    setTimeout(showSuccessPage, 1000); // 延迟1秒跳转，让用户看到成功提示
+                    // 延迟1秒跳转成功页面
+                    setTimeout(showSuccessPage, 1000);
                 } else {
                     resultDiv.textContent = '卡密无效或已过期';
                     resultDiv.className = 'error';
