@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XcapTools · 虚无CAP解析工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b0c1a 0%, #1a1f35 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #eef2ff;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: #9ca3af;
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(168, 139, 250, 0.3);
+            box-shadow: 0 30px 60px -12px rgba(168, 139, 250, 0.2);
+        }
+
+        .pro {
+            background: linear-gradient(145deg, rgba(37, 27, 61, 0.8), rgba(17, 24, 39, 0.9));
+        }
+
+        .lite {
+            background: linear-gradient(145deg, rgba(27, 37, 61, 0.8), rgba(17, 24, 39, 0.9));
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge-pro {
+            background: linear-gradient(120deg, #a78bfa20, #8b5cf620);
+            color: #a78bfa;
+            border: 1px solid #a78bfa40;
+        }
+
+        .badge-lite {
+            background: linear-gradient(120deg, #60a5fa20, #3b82f620);
+            color: #60a5fa;
+            border: 1px solid #60a5fa40;
+        }
+
+        .version {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-left: 0.5rem;
+        }
+
+        .features {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .features li {
+            padding: 0.7rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: #d1d5db;
+        }
+
+        .features li:last-child {
+            border-bottom: none;
+        }
+
+        .features .pro-only {
+            color: #a78bfa;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: auto;
+            background: #a78bfa20;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid #a78bfa40;
+        }
+
+        .features .lite-only {
+            color: #60a5fa;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: auto;
+            background: #60a5fa20;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid #60a5fa40;
+        }
+
+        .download-btn {
+            display: block;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-decoration: none;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .download-pro {
+            background: linear-gradient(120deg, #a78bfa, #8b5cf6);
+            color: #0b0c1a;
+            box-shadow: 0 10px 20px -5px #8b5cf650;
+        }
+
+        .download-pro:hover {
+            background: linear-gradient(120deg, #b59cfb, #9d71f7);
+            box-shadow: 0 15px 25px -5px #8b5cf670;
+            transform: scale(1.02);
+        }
+
+        .download-lite {
+            background: linear-gradient(120deg, #60a5fa, #3b82f6);
+            color: #0b0c1a;
+            box-shadow: 0 10px 20px -5px #3b82f650;
+        }
+
+        .download-lite:hover {
+            background: linear-gradient(120deg, #7ab0fb, #5490f7);
+            box-shadow: 0 15px 25px -5px #3b82f670;
+            transform: scale(1.02);
+        }
+
+        .stats-preview {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            border: 1px solid #ffffff08;
+            color: #a5b4fc;
+        }
+
+        .stats-preview span {
+            color: #f472b6;
+        }
+
+        .footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: #a78bfa;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>XcapTools</h1>
+            <p>虚无CAP解析工具 · 极简 · 专业 · 强大</p>
+        </div>
+
+        <div class="grid">
+            <!-- Pro 专业版 -->
+            <div class="card pro">
+                <div class="badge badge-pro">PROFESSIONAL</div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 2.5rem; font-weight: 700;">xcaptools</span>
+                    <span class="version">v3.0</span>
+                </div>
+                <p style="color: #9ca3af; margin-top: 0.5rem;">全量分析 · 异常检测 · 会话追踪</p>
+                
+                <div class="stats-preview">
+                    > 总数据包: 12,500<br>
+                    > TCP: 8,500 | UDP: 3,000<br>
+                    > 192.168.1.100 — <span>450次</span><br>
+                    > 端口 443(HTTPS) — <span>150次</span>
+                </div>
+
+                <ul class="features">
+                    <li>✓ 完整协议分析 (TCP/UDP/ICMP/ARP)</li>
+                    <li>✓ 流量统计 + 带宽计算</li>
+                    <li>✓ IP:端口会话追踪</li>
+                    <li>✓ 应用层协议识别 <span class="pro-only">PRO</span></li>
+                    <li>✓ 异常行为检测 <span class="pro-only">PRO</span></li>
+                    <li>✓ 专业报告生成</li>
+                    <li>✓ 命令行参数支持 (-a -b -c -d)</li>
+                </ul>
+
+                <a href="https://gitee.com/xuwuwzjb/wzry/raw/master/XcapTools_1.0.apk" class="download-btn download-pro">⬇ 下载专业版</a>
+            </div>
+
+            <!-- Lite 轻量版 -->
+            <div class="card lite">
+                <div class="badge badge-lite">LITE</div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 2.5rem; font-weight: 700;">XcapLite</span>
+                    <span class="version">v1.0</span>
+                </div>
+                <p style="color: #9ca3af; margin-top: 0.5rem;">极简 · 只输出IP和端口</p>
+                
+                <div class="stats-preview">
+                    虚无CAP解析工具<br>
+                    192.168.1.100 -- 共访问450次<br>
+                    172.217.160.78 -- 共访问320次<br>
+                    443 -- 共访问150次<br>
+                    80 -- 共访问120次
+                </div>
+
+                <ul class="features">
+                    <li>✓ IP访问次数统计</li>
+                    <li>✓ 端口访问次数统计</li>
+                    <li>✓ 自动排序 (高频优先)</li>
+                    <li>✓ 一键生成结果文件</li>
+                    <li>✓ 交互式路径输入</li>
+                    <li>✓ 极简输出格式</li>
+                </ul>
+
+                <a href="https://gitee.com/xuwuwzjb/wzry/raw/master/XcapLite_1.0.apk" class="download-btn download-lite">⬇ 下载轻量版</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 虚无CAP解析工具 · 2026 · 开源· 免费</p>
+            <p style="margin-top: 0.5rem;">
+                <a href="#">文档</a> · 
+                <a href="#">更新日志</a> · 
+                <a href="#">反馈</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
