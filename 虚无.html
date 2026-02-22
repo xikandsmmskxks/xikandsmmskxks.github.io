@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>虚无CAP解析 · 快过正常工具2倍</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0c12;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            color: #eef4ff;
+        }
+
+        .card {
+            max-width: 880px;
+            width: 100%;
+            background: #111822;
+            border-radius: 2.8rem;
+            padding: 2.5rem 2rem;
+            border: 1px solid #2c384b;
+            box-shadow: 0 30px 50px -20px #000;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .title-light {
+            color: #b7cdff;
+            font-weight: 300;
+            font-size: 2.2rem;
+        }
+
+        .badge-2x {
+            background: linear-gradient(135deg, #ffb347, #ff7e5f);
+            color: #111;
+            font-weight: 800;
+            font-size: 1.6rem;
+            padding: 0.3rem 1.2rem;
+            border-radius: 80px;
+            display: inline-block;
+            box-shadow: 0 0 25px #ff9f4d;
+            margin-left: 0.8rem;
+            border: 1px solid #ffd966;
+        }
+
+        .sub {
+            color: #95acc9;
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            border-left: 4px solid #ffaa33;
+            padding-left: 1.4rem;
+        }
+
+        /* 下载按钮 */
+        .download-area {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+        }
+        .download-btn {
+            background: #ffaa33;
+            color: #0a0c12;
+            font-weight: 700;
+            font-size: 1.3rem;
+            padding: 0.8rem 2.2rem;
+            border-radius: 60px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            border: 1px solid #ffd58c;
+            box-shadow: 0 0 25px #ffaa33aa;
+            transition: 0.15s;
+            letter-spacing: 0.5px;
+        }
+        .download-btn:hover {
+            background: #ffb850;
+            box-shadow: 0 0 35px #ffb850;
+            transform: scale(1.02);
+        }
+
+        /* 对比卡片双栏 */
+        .vs-container {
+            display: flex;
+            gap: 1.2rem;
+            margin: 2.8rem 0 2rem;
+            flex-wrap: wrap;
+        }
+
+        .vs-card {
+            flex: 1 1 250px;
+            background: #1a2332;
+            border-radius: 2rem;
+            padding: 2rem 1.5rem;
+            border: 1px solid #314159;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .vs-card.normal {
+            opacity: 0.8;
+            border-color: #4a4f62;
+        }
+
+        .vs-card.void {
+            border-color: #ffaa33;
+            box-shadow: 0 0 25px rgba(255, 170, 51, 0.3);
+            background: #1e293d;
+        }
+
+        .label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .label.normal span {
+            background: #3d4459;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            color: #b9c8e6;
+        }
+
+        .label.void span {
+            background: #ffaa33;
+            color: #1a1f2b;
+            font-weight: 700;
+            padding: 0.2rem 1.2rem;
+            border-radius: 30px;
+        }
+
+        .speed-number {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1;
+            margin: 0.5rem 0 0.2rem;
+        }
+
+        .speed-unit {
+            font-size: 1.2rem;
+            color: #7a8cb0;
+            margin-left: 0.3rem;
+        }
+
+        .file-info {
+            color: #a5bbdd;
+            margin: 1rem 0 1.5rem;
+            font-size: 1.1rem;
+            border-top: 1px dashed #354153;
+            padding-top: 1rem;
+        }
+
+        .vs-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #ffaa33;
+            color: #111;
+            font-weight: 800;
+            font-size: 1.3rem;
+            padding: 0.2rem 1.2rem;
+            border-radius: 60px;
+            border: 2px solid #ffdd99;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffaa33;
+            width: 50px;
+        }
+
+        /* 标杆进度 */
+        .speed-bar-bg {
+            background: #293241;
+            height: 30px;
+            border-radius: 40px;
+            margin: 1rem 0 0.5rem;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .speed-bar-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .fill-normal {
+            width: 30%;
+            background: #5c6f8c;
+        }
+
+        .fill-void {
+            width: 60%;  /* 正好两倍 */
+            background: linear-gradient(90deg, #ffaa33, #ffc107);
+            box-shadow: 0 0 15px #ffc107;
+        }
+
+        .ratio-note {
+            display: flex;
+            justify-content: space-between;
+            color: #95adcc;
+            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+        }
+
+        /* 1GB预估 */
+        .predict-row {
+            background: #0e1622;
+            border-radius: 3rem;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            border: 1px solid #31415a;
+            margin: 2rem 0 1.8rem;
+        }
+
+        .predict-item {
+            display: flex;
+            align-items: baseline;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .predict-label {
+            color: #7f97bc;
+            font-size: 1.1rem;
+        }
+
+        .predict-value {
+            font-size: 2.3rem;
+            font-weight: 700;
+        }
+
+        .predict-value.normal {
+            color: #95adcc;
+            text-decoration: line-through 2px #ff7373;
+        }
+
+        .predict-value.void {
+            color: #ffc456;
+            text-shadow: 0 0 10px #ffb02e;
+        }
+
+        .small-note {
+            color: #5f779b;
+            font-size: 0.9rem;
+        }
+
+        .feature-compact {
+            display: flex;
+            gap: 0.5rem 1rem;
+            flex-wrap: wrap;
+            margin: 1.8rem 0 1rem;
+            font-size: 0.95rem;
+        }
+
+        .feature-item {
+            background: #1f2a38;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #37495f;
+        }
+
+        .feature-item.highlight {
+            border-color: #ffaa33;
+            color: #ffdcaa;
+        }
+
+        .footer-note {
+            margin-top: 2.5rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid #26303f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #627797;
+        }
+
+        @media (max-width: 650px) {
+            .card { padding: 1.8rem; }
+            h1 { font-size: 2.4rem; }
+            .badge-2x { font-size: 1.2rem; }
+            .vs-container { flex-direction: column; }
+            .divider { transform: rotate(90deg); margin: -0.5rem 0; }
+            .speed-number { font-size: 3rem; }
+            .download-area { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <!-- 头部加下载按钮 (右对齐) -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+            <div>
+                <h1>
+                    虚无<span class="title-light">CAP</span>
+                    <span class="badge-2x">2X</span>
+                </h1>
+                <div class="sub">同样的784MB · 速度是正常工具的两倍</div>
+            </div>
+            <div class="download-area">
+                <a href="https://gitee.com/xuwuwzjb/wzry/raw/master/XcapLite.apk" class="download-btn" target="_blank" rel="noopener noreferrer">⬇️ 下载虚无CAP</a>
+            </div>
+        </div>
+
+        <!-- 正面硬刚：左右对比 + 中间VS -->
+        <div class="vs-container">
+            <!-- 正常工具侧 (基于你的数据推算: 他的两倍 => 正常解析 784MB 约 4.12秒) -->
+            <div class="vs-card normal">
+                <div class="label normal"><span>⚙️ 正常CAP工具</span></div>
+                <div class="speed-number">4.12<span class="speed-unit">秒</span></div>
+                <div class="file-info">📁 784 MB · 543k 包</div>
+                <div class="speed-bar-bg">
+                    <div class="speed-bar-fill fill-normal">基准</div>
+                </div>
+                <div style="margin-top: 1rem; color: #7f8fb2; font-size: 0.9rem;">
+                    ⏱️ 解析耗时 · 普通移动端水平
+                </div>
+            </div>
+
+            <!-- 中间 VS 装饰 -->
+            <div class="divider">⚡VS⚡</div>
+
+            <!-- 虚无CAP侧 2.06秒 (正好一半) -->
+            <div class="vs-card void">
+                <div class="vs-badge">2倍快</div>
+                <div class="label void"><span>🌀 虚无CAP</span></div>
+                <div class="speed-number">2.06<span class="speed-unit">秒</span></div>
+                <div class="file-info">📁 784 MB · 543k 包</div>
+                <div class="speed-bar-bg">
+                    <div class="speed-bar-fill fill-void">2倍速</div>
+                </div>
+                <div style="margin-top: 1rem; color: #ffcf8a; font-size: 0.9rem;">
+                    ⏱️ 整整快一倍 · 移动端黑科技
+                </div>
+            </div>
+        </div>
+
+        <!-- 比例说明条 30% vs 60% 形象 -->
+        <div class="ratio-note">
+            <span>🐢 正常工具 (4.12秒)</span>
+            <span>⚡ 虚无CAP (2.06秒 · 快100%)</span>
+        </div>
+
+        <!-- 1GB 预估算账：正常约5.26s，虚无约2.63s 又是两倍关系 -->
+        <div class="predict-row">
+            <div class="predict-item">
+                <span class="predict-label">正常工具 1GB 约</span>
+                <span class="predict-value normal">5.26秒</span>
+            </div>
+            <div style="font-size: 1.8rem; color: #ffaa33;">→</div>
+            <div class="predict-item">
+                <span class="predict-label">虚无CAP 1GB 仅</span>
+                <span class="predict-value void">2.63秒</span>
+                <span class="small-note">(快整一倍)</span>
+            </div>
+        </div>
+
+        <!-- 硬指标复核 -->
+        <div style="background: #0e1a24; border-radius: 1.8rem; padding: 1.2rem 1.8rem; margin: 1.8rem 0;">
+            <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: center;">
+                <div><span style="color:#b0c8f0;">📊 实测基准:</span> <strong>543,322 包</strong> · 784MB</div>
+                <div><span style="color:#b0c8f0;">⏱️ 正常工具:</span> <strong>4.12秒</strong> (基于虚无2倍反推)</div>
+                <div><span style="color:#ffaa33;">🚀 虚无CAP:</span> <strong>2.06秒</strong> (实测)</div>
+            </div>
+        </div>
+
+        <!-- 技术特征小标签 + 额外下载入口（小而精） -->
+        <div class="feature-compact">
+            <span class="feature-item">MMAP 内存映射</span>
+            <span class="feature-item highlight">比正常快2倍</span>
+            <span class="feature-item">原生ARM优化</span>
+            <span class="feature-item">流式解析</span>
+            <span class="feature-item">零拷贝索引</span>
+            <span class="feature-item">2.06s实测</span>
+        </div>
+
+        <!-- 手机平台 + 嘲讽普通工具 -->
+        <div style="margin: 2rem 0 1rem; color: #8fa4c9;">
+            📱 移动端真机 · 普通工具还在分钟级挣扎，虚无CAP直接砍到2秒 —— 恰好是他们的两倍速度。
+        </div>
+
+        <!-- 底部按钮2 (可选小补充) 和 网址签名 -->
+        <div class="footer-note">
+            <span>⚡ 虚无CAP · void解析引擎</span>
+            <span style="background: #1d2b39; padding: 0.2rem 1.2rem; border-radius: 40px;">
+                <a href="https://gitee.com/xuwuwzjb/wzry/raw/master/XcapLite" style="color: #ffaa33; text-decoration: none;" target="_blank">https://gitee.com/xuwuwzjb/wzry/raw/master/XcapLite</a>
+            </span>
+        </div>
+
+        <!-- 极简水印性能行 -->
+        <div style="text-align: right; color: #314e6b; font-size: 0.7rem; margin-top: 1rem;">
+            784MB / 543k packets · 2.06s vs 4.12s · 整整两倍
+        </div>
+    </div>
+</body>
+</html>
